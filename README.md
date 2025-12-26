@@ -1,5 +1,7 @@
 # Cat Stack
 
+**[Play Now](https://claygorman.github.io/amandas-cat-games/)**
+
 A fun physics-based stacking game where you drop cats to build the tallest tower possible. Built with Next.js, React, and Matter.js.
 
 ## How to Play
