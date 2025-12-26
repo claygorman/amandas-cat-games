@@ -52,7 +52,7 @@ export default function Home() {
       </div>
 
       {/* Game Area */}
-      <div className="flex-1">
+      <div className="flex-1 h-full">
         <GameCanvas onUpdate={onUpdate} />
       </div>
     </main>

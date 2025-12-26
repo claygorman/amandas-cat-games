@@ -25,6 +25,7 @@ export function GameCanvas({
   const containerRef = useRef<HTMLDivElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const [containerStyle, setContainerStyle] = useState<React.CSSProperties>({});
 
   // Handle canvas context initialization and sizing
   useEffect(() => {
@@ -33,10 +34,23 @@ export function GameCanvas({
       const canvas = canvasRef.current;
       if (!container || !canvas) return;
 
-      // Use visualViewport for accurate mobile dimensions (accounts for browser chrome)
+      // Check if mobile (touch device) for viewport handling
+      const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+      // Use visualViewport on mobile for accurate dimensions (accounts for browser chrome)
+      // On desktop, use container dimensions to respect flex layout
       const visualViewport = window.visualViewport;
-      const containerWidth = visualViewport?.width ?? container.clientWidth;
-      const containerHeight = visualViewport?.height ?? container.clientHeight;
+      const containerWidth = (isMobile && visualViewport) ? visualViewport.width : container.clientWidth;
+      const containerHeight = (isMobile && visualViewport) ? visualViewport.height : container.clientHeight;
+
+      // Only set explicit max-height on mobile to fix iOS viewport issues
+      if (visualViewport && isMobile) {
+        setContainerStyle({
+          maxHeight: `${visualViewport.height}px`,
+        });
+      } else {
+        setContainerStyle({});
+      }
 
       // Wait until container has actual dimensions
       if (containerWidth === 0 || containerHeight === 0) {
@@ -62,8 +76,9 @@ export function GameCanvas({
       // Scale the canvas CSS size for display
       canvas.style.width = `${displayWidth}px`;
       canvas.style.height = `${displayHeight}px`;
+      // Only use horizontal offset - vertical is handled by flex justify-start
       canvas.style.marginLeft = `${offsetX}px`;
-      canvas.style.marginTop = `${offsetY}px`;
+      canvas.style.marginTop = `0px`;
 
       // Scale the context to account for high-DPI
       const ctx = canvas.getContext("2d");
@@ -115,7 +130,8 @@ export function GameCanvas({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex items-center justify-center bg-gray-900 overflow-hidden"
+      className="w-full h-full flex flex-col items-center justify-start bg-gray-900 overflow-hidden"
+      style={containerStyle}
       data-testid="game-container"
     >
       <canvas
