@@ -7,7 +7,7 @@ export default function Home() {
   const { onUpdate } = useGame();
 
   return (
-    <main className="w-screen h-screen bg-gray-900 flex">
+    <main className="w-screen h-screen h-dvh bg-gray-900 flex">
       {/* Instructions Panel */}
       <div className="hidden lg:flex flex-col justify-center p-8 text-white max-w-xs">
         <h1 className="text-3xl font-bold text-pink-400 mb-6">Cat Stack</h1>

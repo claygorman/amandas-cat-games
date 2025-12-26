@@ -33,8 +33,10 @@ export function GameCanvas({
       const canvas = canvasRef.current;
       if (!container || !canvas) return;
 
-      const containerWidth = container.clientWidth;
-      const containerHeight = container.clientHeight;
+      // Use visualViewport for accurate mobile dimensions (accounts for browser chrome)
+      const visualViewport = window.visualViewport;
+      const containerWidth = visualViewport?.width ?? container.clientWidth;
+      const containerHeight = visualViewport?.height ?? container.clientHeight;
 
       // Wait until container has actual dimensions
       if (containerWidth === 0 || containerHeight === 0) {
@@ -76,8 +78,13 @@ export function GameCanvas({
     updateSize();
     window.addEventListener("resize", updateSize);
 
+    // Listen to visualViewport changes for mobile browser chrome
+    const visualViewport = window.visualViewport;
+    visualViewport?.addEventListener("resize", updateSize);
+
     return () => {
       window.removeEventListener("resize", updateSize);
+      visualViewport?.removeEventListener("resize", updateSize);
     };
   }, []);
 
