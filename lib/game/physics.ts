@@ -48,6 +48,10 @@ export function createPhysicsEngine(): PhysicsEngine {
       y: GRAVITY,
       scale: 0.001, // Default Matter.js gravity scale
     },
+    // Increase solver iterations for more stable stacking
+    // Prevents bodies from "squeezing out" of stacks under pressure
+    positionIterations: 10, // Default is 6
+    velocityIterations: 8,  // Default is 4
   });
 
   return {
