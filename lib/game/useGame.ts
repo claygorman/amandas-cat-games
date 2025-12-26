@@ -6,7 +6,7 @@
  * Supports both Classic and "Reach the Top" game modes.
  */
 
-import { useRef, useEffect, useCallback } from "react";
+import { useRef, useEffect, useCallback, useState } from "react";
 import { createPhysicsEngine, updatePhysics, cleanupPhysics, PhysicsEngine, createGroundPlatform } from "./physics";
 import {
   createGameState,
@@ -18,6 +18,7 @@ import {
   isWinState,
   handleStateInput,
   canDropCat,
+  transitionToStart,
   transitionToGameOver,
   transitionToWin,
   transitionToModeSelect,
@@ -37,9 +38,7 @@ import {
   renderPendulumCat,
   renderStartScreen,
   renderModeSelectScreen,
-  renderHUD,
   renderWinLine,
-  renderReachTheTopHUD,
   renderPerfectFeedback,
   renderGameOverScreen,
   renderWinScreen,
@@ -53,6 +52,19 @@ import Matter from "matter-js";
 
 export interface UseGameResult {
   onUpdate: (deltaTime: number, ctx: CanvasRenderingContext2D) => void;
+  isStartState: boolean;
+  highScore: number;
+  onTapToPlay: () => void;
+  /** Whether the game is currently in active gameplay (not in start, mode select, game over, or win state) */
+  isPlaying: boolean;
+  /** Current game mode when playing */
+  gameMode: "classic" | "reachTheTop" | null;
+  /** Current score (classic mode) or cats dropped (reach the top mode) */
+  currentScore: number;
+  /** Number of cats lost (reach the top mode) */
+  catsLost: number;
+  /** Go back to mode selection screen */
+  onBackToMenu: () => void;
 }
 
 export function useGame(): UseGameResult {
@@ -69,6 +81,14 @@ export function useGame(): UseGameResult {
   const bestScoreUpdatedRef = useRef(false);
   // Track when we entered mode select to prevent click-through on same event
   const modeSelectEnteredTimeRef = useRef(0);
+
+  // React state for exposing to UI
+  const [isInStartState, setIsInStartState] = useState(true);
+  const [currentHighScore, setCurrentHighScore] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [gameMode, setGameMode] = useState<"classic" | "reachTheTop" | null>(null);
+  const [currentScore, setCurrentScore] = useState(0);
+  const [catsLost, setCatsLost] = useState(0);
 
   // Initialize game systems
   useEffect(() => {
@@ -126,8 +146,9 @@ export function useGame(): UseGameResult {
   // Handle mode button click
   const handleModeButtonClick = useCallback((event: MouseEvent | TouchEvent) => {
     const gameState = gameStateRef.current;
+    const physics = physicsRef.current;
     const canvas = canvasRef.current;
-    if (!gameState || !canvas || !isModeSelectState(gameState)) return;
+    if (!gameState || !physics || !canvas || !isModeSelectState(gameState)) return;
 
     // Prevent click-through: ignore clicks within 100ms of entering mode select
     // This prevents the same click that triggered "Tap to Play" from also selecting a mode
@@ -153,16 +174,27 @@ export function useGame(): UseGameResult {
     const y = (clientY - rect.top) * scaleY;
 
     // Check which button was clicked
-    const clickedMode = checkModeButtonClick(x, y);
-    if (clickedMode) {
+    const clickedButton = checkModeButtonClick(x, y);
+    if (clickedButton === "back") {
+      // Go back to start state (animated background)
+      transitionToStart(gameState, physics, inputHandlerRef.current ?? undefined);
+      // Update React state to show animated background
+      setIsInStartState(true);
+    } else if (clickedButton === "classic" || clickedButton === "reachTheTop") {
       // Select the game mode and transition to playing
-      selectGameMode(gameState, clickedMode, inputHandlerRef.current ?? undefined);
+      selectGameMode(gameState, clickedButton, inputHandlerRef.current ?? undefined);
 
       // Clear any existing cats for fresh start
       catsRef.current = [];
       pendulumCatVariantRef.current = getRandomCatVariant();
       // Reset best score update tracking for new game
       bestScoreUpdatedRef.current = false;
+
+      // Update React state
+      setIsPlaying(true);
+      setGameMode(clickedButton);
+      setCurrentScore(0);
+      setCatsLost(0);
     }
   }, []);
 
@@ -475,6 +507,7 @@ export function useGame(): UseGameResult {
           transitionToWin(gameState, inputHandlerRef.current ?? undefined);
           // Initialize confetti particles for celebration
           confettiRef.current = createConfettiParticles(50);
+          setIsPlaying(false);
         }
       } else {
         // Classic mode: original game logic
@@ -483,6 +516,7 @@ export function useGame(): UseGameResult {
         if (towerResult.gameOver) {
           // Game over!
           transitionToGameOver(gameState, inputHandlerRef.current ?? undefined);
+          setIsPlaying(false);
         }
 
         // Check for stable cats and award points
@@ -520,15 +554,17 @@ export function useGame(): UseGameResult {
       // Render pendulum cat
       renderPendulumCat(ctx, gameState.pendulumState, pendulumCatVariantRef.current);
 
-      // Render mode-specific HUD
+      // Update React state for header (HUD is now in React header for both modes)
       if (gameState.gameMode === "classic") {
-        // Classic mode: show score and high score
-        renderHUD(ctx, gameState.scoreState.score, gameState.scoreState.highScore);
         // Render perfect feedback if active
         renderPerfectFeedback(ctx, gameState.scoreState);
+        // Update React state for header
+        setCurrentScore(gameState.scoreState.score);
+        setCurrentHighScore(gameState.scoreState.highScore);
       } else {
-        // Reach the Top mode: show cats dropped and lost
-        renderReachTheTopHUD(ctx, gameState.catsDropped, gameState.catsLost);
+        // Reach the Top mode
+        setCurrentScore(gameState.catsDropped);
+        setCatsLost(gameState.catsLost);
       }
     } else if (isGameOverState(gameState)) {
       // Convert seconds to ms
@@ -588,5 +624,67 @@ export function useGame(): UseGameResult {
     }
   }, []);
 
-  return { onUpdate };
+  // Handler for "Tap to Play" button from HTML UI
+  const onTapToPlay = useCallback(() => {
+    const gameState = gameStateRef.current;
+    const physics = physicsRef.current;
+    if (!gameState || !physics) return;
+
+    if (isStartState(gameState)) {
+      // Transition to mode select screen
+      transitionToModeSelect(gameState, physics, inputHandlerRef.current ?? undefined);
+      pendulumCatVariantRef.current = getRandomCatVariant();
+      // Mark when we entered mode select to prevent click-through
+      modeSelectEnteredTimeRef.current = Date.now();
+      // Update React state
+      setIsInStartState(false);
+    }
+  }, []);
+
+  // Sync high score from game state to React state
+  useEffect(() => {
+    const gameState = gameStateRef.current;
+    if (gameState) {
+      setCurrentHighScore(gameState.scoreState.highScore);
+    }
+  }, []);
+
+  // Handler for back button during gameplay - returns to mode select
+  const onBackToMenu = useCallback(() => {
+    const gameState = gameStateRef.current;
+    const physics = physicsRef.current;
+    if (!gameState || !physics) return;
+
+    // Clear cats and reset game state
+    for (const cat of catsRef.current) {
+      Matter.Composite.remove(physics.world, cat.body);
+    }
+    catsRef.current = [];
+    pendulumCatVariantRef.current = getRandomCatVariant();
+    confettiRef.current = null;
+    bestScoreUpdatedRef.current = false;
+
+    // Transition to mode select
+    transitionToModeSelect(gameState, physics, inputHandlerRef.current ?? undefined);
+
+    // Mark when we entered mode select to prevent click-through
+    modeSelectEnteredTimeRef.current = Date.now();
+
+    // Update React state
+    setIsPlaying(false);
+    setGameMode(null);
+    setCurrentScore(0);
+  }, []);
+
+  return {
+    onUpdate,
+    isStartState: isInStartState,
+    highScore: currentHighScore,
+    onTapToPlay,
+    isPlaying,
+    gameMode,
+    currentScore,
+    catsLost,
+    onBackToMenu,
+  };
 }

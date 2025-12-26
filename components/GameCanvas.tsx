@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, ReactNode } from "react";
 import { CANVAS_WIDTH, CANVAS_HEIGHT } from "@/lib/constants";
 import {
   useGameLoop,
@@ -11,6 +11,8 @@ import {
 export interface GameCanvasProps {
   onUpdate?: (deltaTime: number, ctx: CanvasRenderingContext2D) => void;
   isRunning?: boolean;
+  /** Optional overlay content that will be positioned over the canvas */
+  overlay?: ReactNode;
 }
 
 /**
@@ -20,12 +22,14 @@ export interface GameCanvasProps {
 export function GameCanvas({
   onUpdate,
   isRunning = true,
+  overlay,
 }: GameCanvasProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const ctxRef = useRef<CanvasRenderingContext2D | null>(null);
   const [isReady, setIsReady] = useState(false);
   const [containerStyle, setContainerStyle] = useState<React.CSSProperties>({});
+  const [canvasLayout, setCanvasLayout] = useState({ width: 0, height: 0, marginLeft: 0 });
 
   // Handle canvas context initialization and sizing
   useEffect(() => {
@@ -80,6 +84,9 @@ export function GameCanvas({
       canvas.style.marginLeft = `${offsetX}px`;
       canvas.style.marginTop = `0px`;
 
+      // Store layout for overlay positioning
+      setCanvasLayout({ width: displayWidth, height: displayHeight, marginLeft: offsetX });
+
       // Scale the context to account for high-DPI
       const ctx = canvas.getContext("2d");
       if (ctx) {
@@ -130,7 +137,7 @@ export function GameCanvas({
   return (
     <div
       ref={containerRef}
-      className="w-full h-full flex flex-col items-center justify-start bg-gray-900 overflow-hidden"
+      className="w-full h-full flex flex-col justify-start bg-gray-900 overflow-hidden relative"
       style={containerStyle}
       data-testid="game-container"
     >
@@ -142,6 +149,22 @@ export function GameCanvas({
           imageRendering: "crisp-edges",
         }}
       />
+      {/* Overlay positioned to match canvas dimensions */}
+      {overlay && canvasLayout.width > 0 && (
+        <div
+          className="canvas-overlay"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: canvasLayout.marginLeft,
+            width: canvasLayout.width,
+            height: canvasLayout.height,
+            pointerEvents: 'none',
+          }}
+        >
+          {overlay}
+        </div>
+      )}
     </div>
   );
 }

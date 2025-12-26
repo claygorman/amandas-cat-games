@@ -16,4 +16,428 @@ body {
   touch-action: none; /* Prevent default touch behaviors */
   position: fixed; /* Prevent iOS Safari bounce */
   inset: 0;
+  font-family: 'Nunito', 'Segoe UI', sans-serif;
+}
+
+/* Animated Background */
+.animated-background {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, #FFF5F7 0%, #FFE4E9 30%, #FFD1DC 70%, #FFEEF2 100%);
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* Floating clouds */
+.cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(20px);
+  opacity: 0.8;
+}
+
+.cloud-1 {
+  width: 250px;
+  height: 120px;
+  top: 5%;
+  left: 5%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.9) 0%, transparent 70%);
+  animation: cloudFloat1 25s ease-in-out infinite;
+}
+
+.cloud-2 {
+  width: 200px;
+  height: 100px;
+  top: 15%;
+  right: 10%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.8) 0%, transparent 70%);
+  animation: cloudFloat2 30s ease-in-out infinite;
+}
+
+.cloud-3 {
+  width: 180px;
+  height: 90px;
+  top: 55%;
+  left: 15%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.7) 0%, transparent 70%);
+  animation: cloudFloat1 35s ease-in-out infinite reverse;
+}
+
+@keyframes cloudFloat1 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(60px, 25px); }
+}
+
+@keyframes cloudFloat2 {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-50px, 20px); }
+}
+
+/* Floating cats */
+.cat {
+  position: absolute;
+  animation: floatUp linear infinite;
+}
+
+.cat-1 { left: 8%; width: 70px; animation-duration: 22s; animation-delay: 0s; opacity: 0.5; }
+.cat-2 { left: 25%; width: 55px; animation-duration: 28s; animation-delay: 4s; opacity: 0.4; }
+.cat-3 { left: 45%; width: 80px; animation-duration: 24s; animation-delay: 8s; opacity: 0.6; }
+.cat-4 { left: 65%; width: 60px; animation-duration: 26s; animation-delay: 12s; opacity: 0.45; }
+.cat-5 { left: 82%; width: 65px; animation-duration: 25s; animation-delay: 2s; opacity: 0.5; }
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(110vh) rotate(-10deg);
+  }
+  25% {
+    transform: translateY(75vh) rotate(5deg) translateX(15px);
+  }
+  50% {
+    transform: translateY(45vh) rotate(-5deg) translateX(-10px);
+  }
+  75% {
+    transform: translateY(15vh) rotate(8deg) translateX(20px);
+  }
+  100% {
+    transform: translateY(-20vh) rotate(-10deg) translateX(0);
+  }
+}
+
+/* Yarn balls */
+.yarn {
+  position: absolute;
+  animation: yarnFloat linear infinite;
+}
+
+.yarn-1 { left: 18%; width: 45px; animation-duration: 20s; animation-delay: 3s; }
+.yarn-2 { left: 55%; width: 38px; animation-duration: 24s; animation-delay: 10s; }
+.yarn-3 { left: 78%; width: 50px; animation-duration: 22s; animation-delay: 6s; }
+
+@keyframes yarnFloat {
+  0% {
+    transform: translateY(110vh) rotate(0deg);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(-15vh) rotate(720deg);
+    opacity: 0.6;
+  }
+}
+
+/* Hearts */
+.heart {
+  position: absolute;
+  animation: heartFloat ease-out infinite;
+}
+
+.heart-1 { left: 12%; animation-duration: 14s; animation-delay: 0s; }
+.heart-2 { left: 32%; animation-duration: 16s; animation-delay: 4s; }
+.heart-3 { left: 52%; animation-duration: 13s; animation-delay: 8s; }
+.heart-4 { left: 72%; animation-duration: 15s; animation-delay: 2s; }
+.heart-5 { left: 88%; animation-duration: 14s; animation-delay: 6s; }
+
+@keyframes heartFloat {
+  0% {
+    transform: translateY(105vh) scale(0);
+    opacity: 0;
+  }
+  10% {
+    transform: translateY(90vh) scale(1);
+    opacity: 0.5;
+  }
+  90% {
+    transform: translateY(5vh) scale(1);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-5vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+/* Paw prints */
+.paw {
+  position: absolute;
+  animation: pawPulse 5s ease-in-out infinite;
+}
+
+.paw-1 { left: 8%; top: 18%; transform: rotate(25deg); animation-delay: 0s; }
+.paw-2 { left: 22%; top: 42%; transform: rotate(-35deg); animation-delay: 1s; }
+.paw-3 { left: 38%; top: 12%; transform: rotate(50deg); animation-delay: 2s; }
+.paw-4 { left: 52%; top: 65%; transform: rotate(-20deg); animation-delay: 3s; }
+.paw-5 { left: 68%; top: 28%; transform: rotate(70deg); animation-delay: 4s; }
+.paw-6 { left: 85%; top: 52%; transform: rotate(-55deg); animation-delay: 0.5s; }
+.paw-7 { left: 15%; top: 75%; transform: rotate(40deg); animation-delay: 2.5s; }
+.paw-8 { left: 75%; top: 78%; transform: rotate(-10deg); animation-delay: 3.5s; }
+
+@keyframes pawPulse {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(var(--rotation, 0deg)); }
+  20%, 80% { opacity: 0.45; transform: scale(1) rotate(var(--rotation, 0deg)); }
+}
+
+/* Sparkles */
+.sparkle {
+  position: absolute;
+  animation: sparkleTwinkle 3s ease-in-out infinite;
+}
+
+.sparkle-1 { left: 10%; top: 8%; animation-delay: 0s; }
+.sparkle-2 { left: 28%; top: 22%; animation-delay: 0.4s; }
+.sparkle-3 { left: 42%; top: 5%; animation-delay: 0.8s; }
+.sparkle-4 { left: 58%; top: 32%; animation-delay: 1.2s; }
+.sparkle-5 { left: 72%; top: 12%; animation-delay: 1.6s; }
+.sparkle-6 { left: 88%; top: 38%; animation-delay: 2s; }
+.sparkle-7 { left: 18%; top: 55%; animation-delay: 2.4s; }
+.sparkle-8 { left: 48%; top: 48%; animation-delay: 2.8s; }
+.sparkle-9 { left: 78%; top: 58%; animation-delay: 0.2s; }
+.sparkle-10 { left: 35%; top: 72%; animation-delay: 1s; }
+
+@keyframes sparkleTwinkle {
+  0%, 100% { opacity: 0; transform: scale(0) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(180deg); }
+}
+
+/* Fish */
+.fish {
+  position: absolute;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.fish-1 {
+  top: 25%;
+  animation: fishSwimLeft 22s linear infinite;
+}
+
+.fish-2 {
+  top: 50%;
+  animation: fishSwimRight 25s linear infinite;
+  animation-delay: 5s;
+}
+
+.fish-3 {
+  top: 70%;
+  animation: fishSwimLeft 20s linear infinite;
+  animation-delay: 12s;
+}
+
+@keyframes fishSwimLeft {
+  0% { transform: translateX(105vw) scaleX(-1); }
+  100% { transform: translateX(-10vw) scaleX(-1); }
+}
+
+@keyframes fishSwimRight {
+  0% { transform: translateX(-10vw) scaleX(1); }
+  100% { transform: translateX(105vw) scaleX(1); }
+}
+
+/* Grass */
+.animated-grass {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background: linear-gradient(to top, #7CB342, #9CCC65, transparent);
+  opacity: 0.85;
+}
+
+.grass-blade {
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to top, #689F38, #8BC34A);
+  border-radius: 50% 50% 0 0;
+  transform-origin: bottom center;
+  animation: grassSway 2.5s ease-in-out infinite;
+}
+
+@keyframes grassSway {
+  0%, 100% { transform: rotate(-5deg); }
+  50% { transform: rotate(5deg); }
+}
+
+/* Vignette */
+.vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(255,182,193,0.25) 100%);
+  pointer-events: none;
+}
+
+/* Game UI */
+.game-ui {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.main-cat {
+  animation: mainCatBounce 2s ease-in-out infinite;
+}
+
+@keyframes mainCatBounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-15px); }
+}
+
+.title {
+  font-size: 58px;
+  font-weight: 800;
+  color: #FF6B6B;
+  text-shadow: 4px 4px 0 #FFB6C1, 6px 6px 0 rgba(255,107,107,0.15);
+  margin: 10px 0 5px;
+  animation: titlePop 0.6s ease-out;
+}
+
+@keyframes titlePop {
+  0% { opacity: 0; transform: scale(0.8) translateY(20px); }
+  100% { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.subtitle {
+  font-size: 18px;
+  color: #999;
+  margin-bottom: 20px;
+  animation: fadeIn 0.8s ease-out 0.2s both;
+}
+
+.best-score {
+  font-size: 26px;
+  font-weight: 700;
+  color: #FF6B6B;
+  margin-bottom: 25px;
+  animation: fadeIn 0.8s ease-out 0.4s both;
+}
+
+.play-btn {
+  font-size: 26px;
+  font-weight: 700;
+  color: #4CAF50;
+  background: rgba(255,255,255,0.95);
+  border: none;
+  padding: 14px 45px;
+  border-radius: 50px;
+  cursor: pointer;
+  box-shadow: 0 6px 25px rgba(76,175,80,0.35);
+  transition: transform 0.2s, box-shadow 0.2s;
+  animation: fadeIn 0.8s ease-out 0.6s both;
+}
+
+.play-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 30px rgba(76,175,80,0.45);
+}
+
+.play-btn:active {
+  transform: scale(0.98);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Game Header - positioned inside the canvas overlay */
+.game-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.88);
+  border-radius: 0 0 10px 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(255,255,255,0.9);
+  border: 1px solid #FFB6C1;
+  border-radius: 16px;
+  color: #FF6B6B;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(255,107,107,0.15);
+}
+
+.back-button:hover {
+  transform: scale(1.02);
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(255,107,107,0.2);
+}
+
+.back-button:active {
+  transform: scale(0.98);
+}
+
+.back-button svg {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.header-stats {
+  display: flex;
+  gap: 16px;
+}
+
+.header-score,
+.header-best,
+.header-lost,
+.header-stacked {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  color: #999;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 700;
+  color: #FF6B6B;
+}
+
+.header-best .stat-value {
+  color: #4CAF50;
+}
+
+.header-cats .stat-value {
+  color: #7BC67B;
+}
+
+.header-lost .stat-value {
+  color: #A8A8A8;
+}
+
+.header-stacked .stat-value {
+  color: #7BC67B;
+}
+
+.header-mode {
+  padding: 3px 10px;
+  background: rgba(255,182,193,0.3);
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #FF6B6B;
 }

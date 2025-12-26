@@ -281,12 +281,16 @@ function isPointInRect(x: number, y: number, rect: Rect): boolean {
  *
  * @param x - X coordinate of the click
  * @param y - Y coordinate of the click
- * @returns "classic" or "reachTheTop" if a button was clicked, null otherwise
+ * @returns "classic", "reachTheTop", or "back" if a button was clicked, null otherwise
  */
 export function checkModeButtonClick(
   x: number,
   y: number
-): "classic" | "reachTheTop" | null {
+): "classic" | "reachTheTop" | "back" | null {
+  if (isPointInRect(x, y, MODE_BUTTON_BOUNDS.back)) {
+    return "back";
+  }
+
   if (isPointInRect(x, y, MODE_BUTTON_BOUNDS.classic)) {
     return "classic";
   }

@@ -43,7 +43,7 @@ export interface Rect {
  * Mode button bounds constants for hit-testing.
  * These are exported so they can be used by input.ts for button detection.
  */
-export const MODE_BUTTON_BOUNDS: { classic: Rect; reachTheTop: Rect } = {
+export const MODE_BUTTON_BOUNDS: { classic: Rect; reachTheTop: Rect; back: Rect } = {
   classic: {
     x: CANVAS_WIDTH / 2 - 280,
     y: 420,
@@ -55,6 +55,12 @@ export const MODE_BUTTON_BOUNDS: { classic: Rect; reachTheTop: Rect } = {
     y: 620,
     width: 560,
     height: 160,
+  },
+  back: {
+    x: 30,
+    y: 30,
+    width: 100,
+    height: 50,
   },
 };
 
@@ -881,7 +887,7 @@ export function renderStartScreen(
 
 /**
  * Renders the mode selection screen UI.
- * Displays "Choose Mode" title and two mode buttons with descriptions.
+ * Displays "Choose Mode" title, mode buttons, instructions, and back button.
  */
 export function renderModeSelectScreen(
   ctx: CanvasRenderingContext2D
@@ -892,6 +898,9 @@ export function renderModeSelectScreen(
   // Draw semi-transparent overlay with soft pink tint (matching start screen)
   ctx.fillStyle = "rgba(255, 245, 245, 0.95)";
   ctx.fillRect(0, 0, CANVAS_WIDTH, CANVAS_HEIGHT);
+
+  // Draw back button
+  drawBackButton(ctx, MODE_BUTTON_BOUNDS.back);
 
   // Draw decorative cat silhouette behind title
   ctx.save();
@@ -938,10 +947,124 @@ export function renderModeSelectScreen(
     drawGoalIcon
   );
 
+  // Draw instructions section at the bottom
+  drawInstructionsSection(ctx);
+
   // Draw decorative paw prints
-  drawPawPrint(ctx, 80, 900, 0.6);
-  drawPawPrint(ctx, 640, 950, 0.5);
-  drawPawPrint(ctx, 150, 1050, 0.4);
+  drawPawPrint(ctx, 80, 1100, 0.6);
+  drawPawPrint(ctx, 640, 1150, 0.5);
+  drawPawPrint(ctx, 150, 1200, 0.4);
+}
+
+/**
+ * Draws the back button for the mode select screen.
+ */
+function drawBackButton(ctx: CanvasRenderingContext2D, bounds: Rect): void {
+  const { x, y, width, height } = bounds;
+  const cornerRadius = 12;
+
+  // Button shadow
+  ctx.shadowColor = "rgba(0, 0, 0, 0.1)";
+  ctx.shadowBlur = 6;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 2;
+
+  // Button background
+  ctx.fillStyle = "rgba(255, 255, 255, 0.9)";
+  drawRoundedRect(ctx, x, y, width, height, cornerRadius);
+  ctx.fill();
+
+  // Reset shadow
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+
+  // Button border
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.1)";
+  ctx.lineWidth = 1;
+  drawRoundedRect(ctx, x, y, width, height, cornerRadius);
+  ctx.stroke();
+
+  // Arrow and text
+  ctx.fillStyle = "#888888";
+  ctx.font = "bold 18px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("< Back", x + width / 2, y + height / 2);
+}
+
+/**
+ * Draws the instructions section at the bottom of the mode select screen.
+ */
+function drawInstructionsSection(ctx: CanvasRenderingContext2D): void {
+  const centerX = CANVAS_WIDTH / 2;
+  const startY = 830;
+  const padding = 25;
+  const boxWidth = 600;
+  const boxHeight = 240;
+  const cornerRadius = 20;
+
+  // Background box
+  ctx.shadowColor = "rgba(0, 0, 0, 0.1)";
+  ctx.shadowBlur = 10;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 3;
+
+  ctx.fillStyle = "rgba(255, 255, 255, 0.85)";
+  drawRoundedRect(ctx, centerX - boxWidth / 2, startY, boxWidth, boxHeight, cornerRadius);
+  ctx.fill();
+
+  // Reset shadow
+  ctx.shadowColor = "transparent";
+  ctx.shadowBlur = 0;
+
+  // Section title
+  ctx.fillStyle = "#FF6B6B";
+  ctx.font = "bold 24px Arial, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("How to Play", centerX, startY + 35);
+
+  // Instructions content
+  ctx.fillStyle = "#666666";
+  ctx.font = "18px Arial, sans-serif";
+  ctx.textAlign = "left";
+  const textX = centerX - boxWidth / 2 + padding + 10;
+
+  const instructions = [
+    { icon: "👆", text: "Tap or Click to drop cats" },
+    { icon: "⌨️", text: "Spacebar also works!" },
+    { icon: "🎯", text: "Time your drops carefully" },
+    { icon: "⚡", text: "Speed increases as you stack!" },
+  ];
+
+  instructions.forEach((instruction, index) => {
+    const lineY = startY + 75 + index * 38;
+    ctx.font = "20px Arial, sans-serif";
+    ctx.fillText(instruction.icon, textX, lineY);
+    ctx.font = "18px Arial, sans-serif";
+    ctx.fillStyle = "#555555";
+    ctx.fillText(instruction.text, textX + 35, lineY);
+  });
+
+  // Scoring tips on the right side
+  ctx.textAlign = "left";
+  const rightX = centerX + 30;
+
+  const tips = [
+    { icon: "✅", text: "+1 for each stacked cat" },
+    { icon: "⭐", text: "+2 bonus for perfect drops!" },
+    { icon: "😿", text: "Game over if cats fall!" },
+  ];
+
+  tips.forEach((tip, index) => {
+    const lineY = startY + 75 + index * 38;
+    ctx.font = "20px Arial, sans-serif";
+    ctx.fillStyle = "#666666";
+    ctx.fillText(tip.icon, rightX, lineY);
+    ctx.font = "18px Arial, sans-serif";
+    ctx.fillStyle = "#555555";
+    ctx.fillText(tip.text, rightX + 35, lineY);
+  });
 }
 
 /**
