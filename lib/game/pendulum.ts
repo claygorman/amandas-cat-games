@@ -120,6 +120,9 @@ export function getCurrentPendulumPosition(
  * Increases the pendulum difficulty by applying speed increase.
  * Call this when reaching difficulty thresholds.
  *
+ * Adjusts accumulated time to maintain the current pendulum position,
+ * preventing the pendulum from "jumping" when speed changes.
+ *
  * @param pendulum - The pendulum state to modify
  * @param newLevel - The new difficulty level to set
  */
@@ -127,9 +130,19 @@ export function increasePendulumDifficulty(
   pendulum: PendulumState,
   newLevel: number
 ): void {
+  const oldSpeedMultiplier = pendulum.speedMultiplier;
+  const newSpeedMultiplier = Math.pow(1 + SPEED_INCREASE_FACTOR, newLevel);
+
+  // Adjust accumulated time to maintain the same angular position
+  // sin(oldOmega * oldTime) = sin(newOmega * newTime)
+  // => newTime = oldTime * (oldSpeed / newSpeed)
+  if (newSpeedMultiplier !== oldSpeedMultiplier) {
+    pendulum.accumulatedTime =
+      pendulum.accumulatedTime * (oldSpeedMultiplier / newSpeedMultiplier);
+  }
+
   pendulum.difficultyLevel = newLevel;
-  // Speed multiplier is compounded: (1 + factor)^level
-  pendulum.speedMultiplier = Math.pow(1 + SPEED_INCREASE_FACTOR, newLevel);
+  pendulum.speedMultiplier = newSpeedMultiplier;
 }
 
 /**
