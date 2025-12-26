@@ -1,0 +1,13 @@
+task_groups:
+  - name: Project Setup and Game Canvas
+    claude_code_subagent: implementer
+  - name: Matter.js Physics Integration
+    claude_code_subagent: implementer
+  - name: Cat Entity System
+    claude_code_subagent: implementer
+  - name: Pendulum, Dropping, and Difficulty
+    claude_code_subagent: implementer
+  - name: Scoring and Game States
+    claude_code_subagent: implementer
+  - name: Test Review, Integration, and Visual Polish
+    claude_code_subagent: implementer

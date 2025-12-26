@@ -1,0 +1,17 @@
+task_groups:
+  - name: Game Mode System Foundation
+    claude_code_subagent: implementer
+  - name: Sticky Landing Mechanic
+    claude_code_subagent: implementer
+  - name: Win Line Detection and Game Flow
+    claude_code_subagent: implementer
+  - name: Mode Selection Screen
+    claude_code_subagent: implementer
+  - name: Win Line and HUD Rendering
+    claude_code_subagent: implementer
+  - name: Win Screen and Celebration
+    claude_code_subagent: implementer
+  - name: Game Loop Integration and Polish
+    claude_code_subagent: implementer
+  - name: Test Review and Gap Analysis
+    claude_code_subagent: implementer
