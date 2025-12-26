@@ -10,7 +10,8 @@ export const ASPECT_RATIO = CANVAS_WIDTH / CANVAS_HEIGHT; // 0.5625 (9:16 portra
 // Physics Configuration
 export const GRAVITY = 1.0;
 export const STABILITY_VELOCITY_THRESHOLD = 0.5;
-export const STABILITY_TIME_REQUIRED = 2000; // ms
+export const STABILITY_TIME_REQUIRED = 2000; // ms (for falling cats in Reach the Top mode)
+export const CLASSIC_STABILITY_TIME_REQUIRED = 100; // ms (fast for static cats in Classic mode)
 
 // Classic Mode Physics (original spec - some bounce, wobble risk)
 export const CAT_FRICTION_CLASSIC = 0.85;

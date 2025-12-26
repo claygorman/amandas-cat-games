@@ -22,6 +22,7 @@ import {
   COLLISION_CATEGORY_GROUND,
   STABILITY_VELOCITY_THRESHOLD,
   STABILITY_TIME_REQUIRED,
+  CLASSIC_STABILITY_TIME_REQUIRED,
 } from "@/lib/constants";
 import { GameMode } from "./state";
 import { PhysicsEngine } from "./physics";
@@ -182,17 +183,21 @@ export function createCatEntity(
 
   // Classic mode: cats are static immediately (no gravity fall)
   // They stay at pendulum position and stack pushes down
+  // Start nearly stable so scoring happens almost immediately
   if (gameMode === "classic") {
     Matter.Body.setStatic(body, true);
     catData.isSticky = true;
+    // Set stableTime just under threshold so first frame update makes it stable
+    catData.stableTime = STABILITY_TIME_REQUIRED - 1;
   }
 
   // Create and return the cat entity
+  // Sync stableTime from catData for classic mode
   const catEntity: CatEntity = {
     body,
     variant: selectedVariant,
     expression: "neutral",
-    stableTime: 0,
+    stableTime: catData.stableTime,
     squishFactor: 1,
     squishVelocity: 0,
     isLanding: false,
